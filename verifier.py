@@ -45,7 +45,14 @@ def tsc_errors(file=None):
         return ["tsc introuvable (npm install -g typescript)"]
     out = run(tsc).stdout.splitlines()
     errors = [l for l in out if "error TS" in l]
-    return [e for e in errors if file is None or e.startswith(file)]
+    if file is None:
+        return errors
+    mine = [e for e in errors if e.startswith(file)]
+    # With a syntax error (TS1xxx) anywhere, tsc skips type checking: report it
+    syntax = [e for e in errors if re.search(r"error TS1\d{3}:", e) and not e.startswith(file)]
+    if syntax and not mine:
+        return ["erreur de syntaxe dans un autre fichier, corrige-la d'abord : " + syntax[0]]
+    return mine
 
 
 def py_tests_ok():
