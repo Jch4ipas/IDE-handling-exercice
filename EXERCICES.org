@@ -398,10 +398,11 @@ Supprime la ligne =// À convertir...=.
 *Vérifier* : =python3 verifier.py 5.4=
 
 *** Comment faire
-0. Coupe d'abord deux aides qui ajouteraient des caractères pendant l'enregistrement :
-   =M-x electric-pair-local-mode= (la fermeture automatique de ={= et ="=) et
-   =M-x corfu-mode= (le menu de complétion). Chaque commande inverse l'état du mode,
-   il suffit de la relancer à la fin pour le remettre.
+*Avant de commencer* : coupe deux aides qui ajouteraient des caractères pendant
+l'enregistrement, =M-x electric-pair-local-mode= (la fermeture automatique de ={= et ="=)
+et =M-x corfu-mode= (le menu de complétion). Chaque commande inverse l'état du mode,
+il suffit de la relancer à la fin pour le remettre.
+
 1. Va au début de la ligne =// p07;...= (=C-s p07= =RET= =C-a=).
 2. =F3= : l'enregistrement commence (=Def= s'affiche en bas).
 3. Transforme la ligne *avec des commandes qui marchent pour toutes les lignes*
