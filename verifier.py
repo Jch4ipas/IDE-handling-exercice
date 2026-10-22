@@ -166,7 +166,7 @@ def check_6_2():
     out = run("node", "--test", *[str(p) for p in sorted((ROOT / "test").glob("*.test.ts"))])
     if out.returncode == 0:
         return []
-    fails = [l for l in out.stdout.splitlines() if l.startswith("not ok")]
+    fails = [l.strip() for l in out.stdout.splitlines() if l.strip().startswith("not ok")]
     return ["tests en échec : " + "; ".join(fails or ["voir node --test"])]
 
 
