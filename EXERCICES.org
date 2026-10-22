@@ -270,7 +270,8 @@ le Bash et les tests. Aucun serveur de langage ne fait le lien entre ces fichier
    =C-c C-k= aurait tout annulé.
 - Tu vois toutes les lignes avant de valider. Tu peux aussi n'en modifier que certaines.
 - Alternative plus simple : =C-x p r= (remplacer dans le projet), avec confirmation
-  fichier par fichier (=y= / =n= / =!=).
+  à chaque occurrence (=y= / =n= / =!=). Elle passe aussi dans =EXERCICES.org= et
+  =verifier.py= : réponds =n= pour ces deux fichiers. =s-F=, lui, les ignore (fichier =.ignore=).
 
 ** TODO 4.3 Remplacer avec confirmation dans un fichier
 *Situation* : les =print("debug: ...")= de [[file:scripts/report.py::def build_report][scripts/report.py]] doivent devenir

@@ -73,13 +73,18 @@ def check_4_1():
     return problems
 
 
+# Built from pieces so that a project-wide replace (exercise 4.2) cannot
+# rewrite this file by accident
+OLD_KEY, NEW_KEY = "api" + "_url", "base" + "_url"
+
+
 def check_4_2():
     problems = []
-    if left := grep("api_url", "config", "scripts"):
-        problems.append(f"'api_url' existe encore dans : {', '.join(left)}")
+    if left := grep(OLD_KEY, "config", "scripts"):
+        problems.append(f"'{OLD_KEY}' existe encore dans : {', '.join(left)}")
     for f in ["config/settings.yaml", "scripts/report.py", "scripts/test_report.py", "scripts/deploy.sh"]:
-        if "base_url" not in read(f):
-            problems.append(f"'base_url' manque dans {f}")
+        if NEW_KEY not in read(f):
+            problems.append(f"'{NEW_KEY}' manque dans {f}")
     if not py_tests_ok():
         problems.append("les tests Python échouent (cd scripts && python3 -m unittest)")
     return problems
