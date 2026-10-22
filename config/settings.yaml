@@ -1,0 +1,10 @@
+# Configuration de la boutique
+shop:
+  name: Petite Boutique
+  currency: CHF
+  api_url: https://api.petite-boutique.ch/v1
+  timeout_seconds: 10
+
+report:
+  output_dir: reports
+  api_url_fallback: https://backup.petite-boutique.ch/v1

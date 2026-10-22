@@ -1,0 +1,657 @@
+#+TITLE: Exercices Emacs — devenir plus rapide que dans VS Code
+#+STARTUP: overview
+#+TODO: TODO | FAIT
+
+* Mode d'emploi (lis-moi d'abord)
+** Comment lire ce fichier
+Ce fichier est en *Org*, le format de notes d'Emacs. Tout se fait au clavier :
+
+| Touche              | Effet                                                         |
+|---------------------+---------------------------------------------------------------|
+| =TAB= sur un titre    | déplie / replie ce titre                                       |
+| =S-TAB= (Shift+Tab)   | déplie / replie tout le fichier                                |
+| =C-c C-o= sur un lien | ouvre le lien (fichier à l'endroit exact) dans l'autre fenêtre |
+| =C-c C-t= sur un titre | marque l'exercice =FAIT= (le compteur du chapitre se met à jour) |
+
+Chaque exercice contient :
+- *Situation* : le cas réel de tous les jours.
+- *À faire* : l'objectif précis.
+- *Comment faire* : un sous-titre replié. Essaie d'abord sans l'ouvrir, puis ouvre-le avec =TAB=.
+- *Vérifier* (quand c'est possible) : une commande qui dit ✅ ou ❌.
+
+** Lire les raccourcis
+| Écrit     | Sur ton Mac                                                       |
+|-----------+-------------------------------------------------------------------|
+| =C-x=       | Ctrl + x                                                          |
+| =M-x=       | Option *gauche* + x  (Option droite reste pour taper [ ] { } \vert ~) |
+| =s-p=       | Cmd + p                                                           |
+| =S-<f12>=   | Shift + F12  (sur un MacBook : Fn + Shift + F12)                   |
+| =C-x p f=   | Ctrl+x, *relâche*, puis p, puis f  (une séquence, pas en même temps) |
+| =C-u C-SPC= | Ctrl+u puis Ctrl+Espace                                           |
+
+Deux réflexes qui sauvent :
+- =C-g= annule *tout* (commande en cours, minibuffer, sélection). Dans le doute : =C-g C-g=.
+- Tape le début d'un raccourci (ex. =C-x=) et attends 1 seconde : *which-key* affiche toutes les suites possibles.
+
+** Préparer ton Emacs
+1. Passe sur le profil *minimal* : =C-c P= puis choisis =minimal= (Emacs redémarre).
+2. Ouvre ce fichier : =C-x C-f ~/emacs-exercices/EXERCICES.org RET=.
+3. Coupe l'écran en deux : =C-x 3=. Les exercices à gauche, le code à droite.
+   =C-x o= passe d'une fenêtre à l'autre.
+
+** Vérifier un exercice et recommencer
+Depuis n'importe quel fichier du projet :
+- =C-x p c= (compiler dans le projet), efface la commande proposée (=C-a C-k=),
+  tape =python3 verifier.py 4.1= puis =RET=.
+- =python3 verifier.py= tout seul vérifie tous les exercices.
+- Pour recommencer un exercice : =python3 verifier.py --reset 4.1=.
+  Attention, les exercices qui modifient le même fichier sont remis à zéro ensemble
+  (4.4, 5.3 et 5.5 travaillent tous dans =src/notes.ts=).
+
+Astuce : dans la commande =C-x p c=, =M-p= rappelle la commande précédente. Pas besoin de la retaper.
+
+* Chapitre 1 — S'orienter [/]
+** TODO 1.1 Ouvrir n'importe quel fichier du projet
+*Situation* : tu veux ouvrir =pricing.ts= sans chercher dans les dossiers.
+*À faire* : ouvre =src/pricing.ts=, puis =scripts/report.py=, sans jamais taper le chemin complet.
+*Équivalent VS Code* : Cmd+P.
+
+*** Comment faire
+- =s-p= (ou =C-x p f=) liste *tous* les fichiers du projet.
+- Tape des morceaux de nom, *dans n'importe quel ordre*, séparés par un espace :
+  =pri ts= trouve =src/pricing.ts=, =rep py= trouve =scripts/report.py=.
+  C'est le style *orderless* : chaque mot filtre la liste.
+- =C-n= / =C-p= (ou les flèches) pour choisir, =RET= pour ouvrir.
+- Pour ouvrir un fichier *hors projet* : =C-x C-f=. Dans ce mode, =M-DEL= efface
+  un dossier entier du chemin.
+- Changer de projet : =C-x p p=.
+
+** TODO 1.2 Passer d'un fichier ouvert à l'autre
+*Situation* : tu as 5 fichiers ouverts et tu jongles entre eux.
+*À faire* : ouvre 3 fichiers, puis reviens à chacun sans la souris. Ferme-en un.
+*Équivalent VS Code* : Ctrl+Tab, Cmd+W.
+
+*** Comment faire
+- =C-x b= : liste des buffers (fichiers ouverts) avec *aperçu en direct* quand tu bouges.
+  =C-x b RET= tout de suite = retour au fichier précédent. C'est le raccourci le plus utilisé.
+- =C-x p b= : seulement les buffers du projet courant.
+- Dans =C-x b=, tape =<= puis une lettre pour filtrer : =< b= les buffers, =< f= les
+  fichiers récents, =< p= les fichiers du projet.
+- Fermer : =s-w= (ou =C-x k RET=).
+- Tu peux garder 30 fichiers ouverts, ce n'est pas un problème dans Emacs.
+  On ne gère pas des onglets, on *saute* vers le fichier voulu.
+
+** TODO 1.3 Retrouver une commande dont tu as oublié le raccourci
+*Situation* : tu sais qu'Emacs sait renommer un symbole, mais plus quelle touche.
+*À faire* :
+1. Trouve la commande de renommage avec =M-x=.
+2. Découvre quelle touche lance =consult-line=.
+3. Liste toutes les touches qui commencent par =C-x p=.
+
+*** Comment faire
+- =M-x= (ou =s-P=) puis tape des mots : =ren sym= → =eglot-rename=. Le raccourci est
+  affiché à droite de la commande quand il existe.
+- =C-h k= puis tape un raccourci : Emacs explique ce qu'il fait.
+  =C-h f= : documentation d'une fonction. =C-h v= : d'une variable.
+- =C-x p= puis attends : *which-key* affiche toutes les suites possibles.
+- =C-h B= : toutes les touches actives ici, avec recherche.
+- =C-h m= : tout sur le mode actuel (TypeScript, Python…) et ses touches.
+
+** TODO 1.4 Annuler, refaire et sortir de tout
+*Situation* : tu as fait une bêtise, ou tu es coincé dans un prompt.
+*À faire* : dans [[file:src/format.ts][src/format.ts]], supprime 3 lignes, annule, refais, puis annule
+une modification *seulement dans une sélection*.
+
+*** Comment faire
+- Annuler : =C-/= (ou =s-z=). Refaire : =C-?= (ou =s-Z=).
+- Annuler dans une région : sélectionne quelques lignes (=C-SPC= puis bouge),
+  puis =C-/= n'annule *que* les changements faits dans cette zone.
+- Coincé (minibuffer, commande à moitié tapée) : =C-g=, plusieurs fois si besoin.
+- Remettre le fichier tel qu'il est sur le disque : =M-x revert-buffer=.
+
+* Chapitre 2 — Se déplacer dans un fichier sans souris [/]
+** TODO 2.1 Les déplacements de base
+*Situation* : la souris te fait perdre une seconde à chaque fois.
+*À faire* : ouvre [[file:src/pricing.ts::export function calcTotal][src/pricing.ts]] et entraîne chaque déplacement
+du tableau 5 fois.
+*Équivalent VS Code* : Cmd+←/→, Option+←/→, Cmd+↑/↓.
+
+*** Comment faire
+| Touche            | Déplacement                                         |
+|-------------------+-----------------------------------------------------|
+| =C-a= / =C-e=         | début / fin de ligne                                |
+| =M-m=               | premier caractère non blanc (après l'indentation)   |
+| =M-f= / =M-b=         | mot suivant / précédent                             |
+| =C-M-a= / =C-M-e=     | début / fin de la *fonction*                        |
+| =C-M-f= / =C-M-b=     | saute par-dessus un bloc ( ), [ ] ou { }            |
+| =M-<= / =M->=         | début / fin du fichier                              |
+| =C-v= / =M-v=         | page suivante / précédente                          |
+| =C-l=               | recentre l'écran sur le curseur (répète : haut, bas) |
+
+Défi : mets le curseur sur le ={= de =calcTotal=, et sors-en avec =C-M-f=.
+Va ensuite au début de la fonction avec =C-M-a=.
+
+** TODO 2.2 Aller à une fonction par son nom, ou à une ligne
+*Situation* : « l'erreur est dans =discountFor= » ou « regarde la ligne 21 ».
+*À faire* : dans =src/pricing.ts=, saute à =discountFor=, puis à la ligne 21.
+*Équivalent VS Code* : Cmd+Shift+O, Ctrl+G.
+
+*** Comment faire
+- =M-g i= : liste des fonctions, constantes et classes du fichier, avec aperçu.
+  Tape =disc= puis =RET=.
+- =M-g g= : aller à une ligne, avec aperçu pendant que tu tapes le numéro.
+
+** TODO 2.3 Sauter n'importe où sur l'écran
+*Situation* : tu vois l'endroit à l'écran, à 15 lignes de distance.
+*À faire* : dans =src/cart.ts=, va sur le mot =filter= en 4 touches maximum.
+
+*** Comment faire
+- =M-j= (avy) : tape 1 ou 2 lettres de l'endroit visé, attends un instant.
+  Chaque endroit correspondant reçoit une lettre d'étiquette. Tape-la, tu y es.
+- Exemple : =M-j fi= puis la lettre affichée sur =filter=.
+- Ça marche partout dans les fenêtres visibles, même dans l'autre moitié de l'écran.
+
+** TODO 2.4 Chercher dans le fichier et revenir où tu étais
+*Situation* : tu cherches où =TAX_RATE= est utilisé, puis tu veux reprendre ton travail.
+*À faire* : dans =src/pricing.ts=, mets le curseur sur =calcTotal=, cherche
+toutes les occurrences de =TAX_RATE=, puis reviens exactement à ton point de départ.
+*Équivalent VS Code* : Cmd+F, Cmd+G.
+
+*** Comment faire
+- =C-s= cherche en avant (=C-r= en arrière) pendant que tu tapes. =C-s= encore pour
+  l'occurrence suivante. =RET= s'arrête là. =C-g= annule et revient au départ.
+- =M-s .= cherche le *symbole* sous le curseur, sans rien taper.
+- =M-s l= : toutes les lignes qui correspondent, en liste avec aperçu (consult-line).
+- Revenir : *chaque saut* (=M-<=, =C-s=, =M-g i=…) pose une marque.
+  - =C-u C-SPC= revient à la marque précédente dans le fichier. Répète-le pour remonter.
+  - =C-x C-SPC= revient même si le saut t'a amené dans un *autre fichier*.
+
+* Chapitre 3 — Naviguer dans le code [/]
+** TODO 3.1 D'un appel de fonction vers sa définition, et retour
+*Situation* : tu lis [[file:src/index.ts::const guestTotal][src/index.ts]] et tu veux voir ce que fait =calcTotal=.
+*À faire* :
+1. Depuis l'appel de =calcTotal= dans =index.ts=, va à sa définition.
+2. Dans la définition, saute encore dans =applyDiscount=.
+3. Reviens en 2 touches jusqu'à =index.ts=.
+4. Recommence, mais ouvre la définition *dans l'autre fenêtre*.
+*Équivalent VS Code* : F12 ou Cmd+clic, puis Ctrl+- pour revenir.
+
+*** Comment faire
+- Curseur sur =calcTotal= puis =M-.= (ou =F12=) : définition.
+- =M-,= (ou =M-<f12>=) : retour. Les sauts s'empilent : 2 sauts = 2 =M-,= pour revenir.
+- =C-x 4 .= : même chose, mais dans l'autre fenêtre. Ton code reste visible.
+- Ça marche dans tous les langages qui ont un serveur de langage (TS, Python, Bash, C…).
+  Sinon, utilise la recherche dans le projet (exercice 3.4).
+
+** TODO 3.2 Trouver toutes les utilisations d'une fonction
+*Situation* : avant de modifier =roundPrice=, tu veux savoir qui l'appelle.
+*À faire* : dans [[file:src/format.ts::export function roundPrice][src/format.ts]], liste tous les appels de =roundPrice=,
+prévisualise chacun, puis ouvre celui de =pricing.ts=.
+*Équivalent VS Code* : Shift+F12.
+
+*** Comment faire
+- Curseur sur =roundPrice=, puis =M-?= (ou =S-<f12>=).
+- La liste s'affiche dans le minibuffer. =C-n= / =C-p= montrent chaque endroit *en
+  direct* dans le code. =RET= y va, =C-g= annule.
+- Tape un mot pour filtrer, par exemple =pricing= pour ne garder que ce fichier.
+- =M-,= pour revenir.
+
+** TODO 3.3 Lire la documentation sans quitter ton code
+*Situation* : tu ne te souviens plus des paramètres de =applyDiscount=.
+*À faire* : affiche la signature, puis la documentation complète, sans changer de fichier.
+*Équivalent VS Code* : survol à la souris.
+
+*** Comment faire
+- Pose le curseur sur un appel de fonction : la signature s'affiche *toute seule*
+  en bas (eldoc). Pareil pendant que tu tapes les arguments.
+- =C-h .= : la documentation complète dans une petite fenêtre flottante.
+  =C-g= la ferme.
+
+** TODO 3.4 Chercher du texte dans tout le projet
+*Situation* : « où est-ce qu'on utilise =TAX_RATE= ? Seulement dans les tests ? »
+*À faire* :
+1. Trouve toutes les lignes du projet contenant =TAX_RATE=.
+2. Garde seulement les résultats dans des fichiers =.ts=.
+3. Parmi eux, garde seulement ceux qui contiennent aussi =subtotal=.
+*Équivalent VS Code* : Cmd+Shift+F.
+
+*** Comment faire
+- =s-F= (ou =M-s r=) : recherche ripgrep dans le projet, avec aperçu en direct.
+- Filtrer par type de fichier : ajoute =--= puis les options de ripgrep :
+  =TAX_RATE -- -g *.ts=
+- Filtrer *dans les résultats* : ajoute =#= puis un mot :
+  =TAX_RATE#subtotal=
+  La partie avant =#= est envoyée à ripgrep, la partie après filtre les résultats affichés.
+- Sur un mot déjà sous le curseur : =s-F= puis =M-n=, qui insère le mot sous le curseur.
+
+** TODO 3.5 Trouver une fonction par son nom dans tout le projet
+*Situation* : tu sais qu'il existe une fonction avec « discount » dans le nom, mais pas où.
+*À faire* : trouve et ouvre =discountFor= sans savoir dans quel fichier elle est.
+*Équivalent VS Code* : Cmd+T.
+
+*** Comment faire
+- =C-M-.= : demande au serveur de langage tous les symboles du projet qui correspondent.
+  Tape =discount=, puis choisis.
+- Différence avec 3.4 : ici seulement les *définitions*, pas chaque ligne de texte.
+
+* Chapitre 4 — Refactoring [/]
+** TODO 4.1 Renommer une fonction partout (le plus rapide)
+*Situation* : =calcTotal= est un mauvais nom. Tu veux =computeCartTotal= partout :
+définition, appels, imports et tests.
+*À faire* : renomme-la *en partant de l'appel* dans [[file:src/index.ts::const guestTotal][src/index.ts]].
+*Équivalent VS Code* : F2.
+*Vérifier* : =python3 verifier.py 4.1=
+
+*** Comment faire
+1. Curseur sur =calcTotal= (n'importe quel appel, ou la définition).
+2. =F2= (ou =C-c l r=), tape =computeCartTotal=, =RET=.
+3. Emacs résume les fichiers modifiés et demande confirmation : =y=.
+4. Les fichiers sont modifiés *mais pas sauvegardés* : =C-x s= puis =!= sauvegarde tout.
+- Le serveur de langage comprend le code : il ne touche pas un autre =calcTotal= qui
+  n'aurait rien à voir. Une simple recherche-remplacement, elle, le ferait.
+- Annuler tout le renommage : =C-/= dans chaque fichier, ou =C-x v n= (exercice 8.1).
+
+** TODO 4.2 Renommer un nom partout, même hors du code (YAML, Bash, Python)
+*Situation* : la clé =api_url= devient =base_url=. Elle apparaît dans le YAML, le Python,
+le Bash et les tests. Aucun serveur de langage ne fait le lien entre ces fichiers.
+*À faire* : remplace *toutes* les occurrences de =api_url= par =base_url=
+(=api_url_fallback= aussi) dans tout le projet, en une seule fois.
+*Vérifier* : =python3 verifier.py 4.2=
+
+*** Comment faire (la technique la plus puissante d'Emacs)
+1. =s-F= puis tape =api_url= : toutes les lignes s'affichent.
+2. =C-.= (embark, « agir sur… ») puis =E= (exporter) : les résultats deviennent un
+   buffer normal.
+3. =C-c C-p= : ce buffer devient *modifiable* (wgrep).
+4. Modifie les lignes comme du texte normal. Par exemple : descends sur la *première
+   ligne de résultat* (=C-n=), puis =M-%= =api_url= =RET= =base_url= =RET= et =!=
+   (tout remplacer). L'en-tête du buffer n'est pas modifiable, d'où le départ sous lui.
+5. =C-c C-c= : les modifications sont écrites dans *tous les fichiers* d'un coup.
+   =C-c C-k= aurait tout annulé.
+- Tu vois toutes les lignes avant de valider. Tu peux aussi n'en modifier que certaines.
+- Alternative plus simple : =C-x p r= (remplacer dans le projet), avec confirmation
+  fichier par fichier (=y= / =n= / =!=).
+
+** TODO 4.3 Remplacer avec confirmation dans un fichier
+*Situation* : les =print("debug: ...")= de [[file:scripts/report.py::def build_report][scripts/report.py]] doivent devenir
+des =logging.debug(...)=.
+*À faire* : remplace les 3 =print("debug: = par =logging.debug("=, et ajoute
+=import logging= en haut du fichier.
+*Vérifier* : =python3 verifier.py 4.3=
+
+*** Comment faire
+1. =M-<= (début du fichier), puis =M-%= (query-replace).
+2. Texte à chercher : =print("debug: = (avec l'espace), =RET=.
+   Remplacer par : =logging.debug("=, =RET=.
+3. À chaque occurrence : =y= remplace, =n= saute, =!= remplace tout le reste,
+   =q= arrête, =^= revient en arrière.
+4. =M-<=, puis =C-o= (insère une ligne vide sans bouger), tape =import logging=.
+- =M-%= part du curseur. Pour tout le fichier, commence par =M-<=.
+- Avec une sélection active, =M-%= ne remplace que dans la sélection.
+
+** TODO 4.4 Remplacer avec une expression régulière
+*Situation* : dans [[file:src/notes.ts::OPENING_HOURS][src/notes.ts]], les horaires =9h-18h= doivent devenir =9:00-18:00=.
+*À faire* : convertis tous les horaires de =OPENING_HOURS= *en une seule commande*.
+*Vérifier* : =python3 verifier.py 4.4=
+
+*** Comment faire
+1. =M-<=, puis =C-M-%= (query-replace-regexp).
+2. Chercher : =\([0-9]+\)h-\([0-9]+\)h=
+   Remplacer par : =\1:00-\2:00=
+3. =!= pour tout remplacer.
+- Dans les regexp d'Emacs, les groupes s'écrivent =\(...\)= (avec antislash),
+  et =\1=, =\2= les réutilisent dans le remplacement.
+- Pour tester une regexp avant : =M-x re-builder= surligne en direct ce qu'elle trouve.
+
+** TODO 4.5 Ajouter un import manquant
+*Situation* : [[file:src/missing-import.ts::formatPrice][src/missing-import.ts]] utilise =formatPrice= sans l'importer (souligné en rouge).
+*À faire* : ajoute l'import *sans le taper*.
+*Équivalent VS Code* : Cmd+. (quick fix).
+*Vérifier* : =python3 verifier.py 4.5=
+
+*** Comment faire
+1. Curseur sur =formatPrice=.
+2. =C-c l a= (actions de code) : choisis =Add import from "./format.ts"=.
+3. Sauvegarde : =C-x C-s= (ou =s-s=).
+- =C-c l a= est ton « Cmd+. ». Essaie-le partout : il propose des corrections,
+  des imports, des conversions, des extractions…
+
+** TODO 4.6 Extraire du code dans une nouvelle fonction
+*Situation* : dans [[file:src/invoice.ts::début du bloc à extraire][src/invoice.ts]], le calcul des totaux mérite sa propre fonction.
+*À faire* : extrais les lignes entre les deux commentaires =---= dans une fonction
+au niveau du module, et nomme-la =appendTotals=.
+*Vérifier* : =python3 verifier.py 4.6=
+
+*** Comment faire
+1. Va sur la ligne =const subtotal= : =C-s const sub= puis =RET=.
+2. =C-a=, =C-SPC= (début de sélection), puis =C-n= jusqu'à la ligne =Total      :=, et =C-e=.
+3. =C-c l a=, puis =Extract to function in module scope=.
+4. La nouvelle fonction s'appelle =newFunction=. Curseur dessus, =F2=, =appendTotals=.
+5. =C-x s != pour sauvegarder.
+
+** TODO 4.7 Formater le fichier et ranger les imports
+*Situation* : avant un commit, tu veux un fichier propre.
+*À faire* : dans =src/index.ts=, casse l'indentation de quelques lignes (ajoute des espaces),
+puis reformate tout le fichier. Range aussi les imports.
+*Équivalent VS Code* : Shift+Option+F, « Organize imports ».
+
+*** Comment faire
+- =M-F= (Option+Shift+F) : formate le fichier avec le serveur de langage.
+- =C-c l f= : formate seulement la sélection.
+- =C-c l o= : trie les imports et retire ceux qui ne servent pas.
+- Sans serveur de langage : =C-x h= (tout sélectionner) puis =TAB=, qui réindente.
+
+* Chapitre 5 — Éditer vite [/]
+** TODO 5.1 Sélectionner intelligemment
+*Situation* : tu veux sélectionner un argument, une expression, une fonction entière.
+*À faire* : dans =src/cart.ts=, sélectionne sans souris : un mot, l'expression
+=(item) => item.id === product.id=, le bloc ={ ... }= de =add=, puis tout le fichier.
+
+*** Comment faire
+- =C-SPC= pose le début de la sélection, puis tu bouges avec n'importe quel déplacement.
+- =C-M-SPC= sélectionne l'expression suivante. Répète-le pour agrandir la sélection.
+- =M-h= : le paragraphe ou bloc. =C-x h= : tout le fichier.
+- =C-x C-x= : échange le début et la fin de la sélection, pour l'agrandir de l'autre côté.
+- =C-g= : annule la sélection.
+
+** TODO 5.2 Couper, copier, coller… et l'historique
+*Situation* : tu as copié 3 choses, et tu veux coller la *première*.
+*À faire* : copie 3 lignes différentes l'une après l'autre, puis colle-les dans l'ordre inverse.
+*Équivalent VS Code* : il n'y en a pas, VS Code ne garde qu'un seul presse-papier.
+
+*** Comment faire
+| Touche  | Effet                                              |
+|---------+----------------------------------------------------|
+| =C-k=     | coupe jusqu'à la fin de la ligne (2 fois : avec le retour à la ligne) |
+| =M-d=     | coupe le mot suivant                                |
+| =C-w=     | coupe la sélection (comme Cmd+X)                    |
+| =M-w=     | copie la sélection (comme Cmd+C)                    |
+| =C-y=     | colle (comme Cmd+V)                                 |
+| =M-y=     | colle depuis *l'historique*, avec recherche et aperçu |
+- Tout ce que tu coupes va dans l'historique. =C-k= plusieurs fois de suite
+  regroupe les lignes en un seul morceau.
+- Cmd+C / Cmd+V marchent aussi, et partagent le même historique.
+
+** TODO 5.3 Éditer une colonne entière (rectangle)
+*Situation* : dans [[file:src/notes.ts::SHIPPING_ZONES][src/notes.ts]], chaque zone de =SHIPPING_ZONES= doit commencer
+par =zone-= (="zone-vaud"=, ="zone-geneve"=…).
+*À faire* : ajoute =zone-= aux 6 lignes en une seule opération.
+*Équivalent VS Code* : curseurs multiples (Option+clic).
+*Vérifier* : =python3 verifier.py 5.3=
+
+*** Comment faire
+1. Mets le curseur juste *après* le guillemet de ="vaud"=.
+2. =C-x SPC= (sélection rectangulaire), puis =C-n= 5 fois jusqu'à ="jura"=.
+   La sélection devient une colonne.
+3. =C-x r t= (« string rectangle »), tape =zone-=, =RET=.
+   Le texte est inséré sur toutes les lignes.
+- Autres commandes sur un rectangle : =C-x r k= (couper la colonne),
+  =C-x r N= (numéroter les lignes), =C-x r o= (insérer des espaces).
+
+** TODO 5.4 Répéter une transformation : les macros clavier
+*Situation* : en bas de [[file:src/catalog.ts::À convertir][src/catalog.ts]], 8 produits sont en commentaire au format
+=// p07;Sirop d'érable;12.4=. Il faut les transformer en vrais objets du tableau =CATALOG=.
+*À faire* : transforme la première ligne *en enregistrant tes touches*, rejoue-les
+sur les 7 autres, puis déplace les 8 lignes dans le tableau (avant =];=).
+Supprime la ligne =// À convertir...=.
+*Vérifier* : =python3 verifier.py 5.4=
+
+*** Comment faire
+0. Coupe d'abord deux aides qui ajouteraient des caractères pendant l'enregistrement :
+   =M-x electric-pair-local-mode= (la fermeture automatique de ={= et ="=) et
+   =M-x corfu-mode= (le menu de complétion). Chaque commande inverse l'état du mode,
+   il suffit de la relancer à la fin pour le remettre.
+1. Va au début de la ligne =// p07;...= (=C-s p07= =RET= =C-a=).
+2. =F3= : l'enregistrement commence (=Def= s'affiche en bas).
+3. Transforme la ligne *avec des commandes qui marchent pour toutes les lignes*
+   (des recherches, pas des flèches comptées) :
+   - =C-d C-d C-d= supprime =// =, puis tape =  { id: "=
+   - =C-s ;= puis =RET= : saute après le premier =;=. =DEL= l'efface.
+     Tape =", name: "=
+   - =C-s ;= =RET= =DEL=, tape =", price: =
+   - =C-e=, tape = },=
+   - =C-n C-a= : début de la ligne suivante (*important*, prépare la répétition).
+4. =F4= : l'enregistrement s'arrête.
+5. =F4= rejoue la macro sur la ligne suivante. =C-u 6 F4= la rejoue 6 fois d'un coup.
+6. Retourne au début de la ligne =p07= (=C-r p07= =RET= =C-a=), =C-SPC=, puis =C-n= 8 fois
+   et =C-w= : les 8 lignes sont coupées. Va sur la ligne =];= (=C-r ];= =RET= =C-a=), =C-y=.
+7. Supprime la ligne =// À convertir...= (dessus : =C-a C-k C-k=), sauvegarde, et
+   relance =M-x electric-pair-local-mode= et =M-x corfu-mode=.
+- Si tu te trompes pendant l'enregistrement : =C-g=, puis recommence avec =F3=.
+- Autre façon : sélectionne toutes les lignes, puis =C-x C-k r= applique la macro à chacune.
+
+** TODO 5.5 Modifier toutes les lignes trouvées (occur)
+*Situation* : dans [[file:src/notes.ts::TODO(jeremy)][src/notes.ts]], tous les =TODO(jeremy)= passent à l'équipe : =TODO(equipe)=.
+*À faire* : liste les lignes concernées, puis modifie-les *depuis la liste*.
+*Vérifier* : =python3 verifier.py 5.5=
+
+*** Comment faire
+1. =M-s o= (occur), tape =TODO(jeremy)=, =RET=. Le buffer =*Occur*= liste les 4 lignes.
+2. Va dans =*Occur*= (=C-x o=), puis =e= : la liste devient modifiable.
+3. Descends sur la première ligne de résultat (=C-n=), puis =M-%= =jeremy= =RET=
+   =equipe= =RET= =!=.
+4. =C-c C-c= : fin de l'édition. Les changements sont déjà dans =notes.ts=.
+5. =C-x s != pour sauvegarder.
+- Dans =*Occur*= (hors édition), =n= / =p= se déplacent et =RET= va à la ligne.
+- C'est l'exercice 4.2 en version « un seul fichier ».
+
+** TODO 5.6 Les petites commandes qui font gagner du temps
+*Situation* : des dizaines de micro-modifications par jour.
+*À faire* : dans un fichier au choix, essaie chaque commande au moins 3 fois.
+
+*** Comment faire
+| Touche        | Effet                                                         |
+|---------------+---------------------------------------------------------------|
+| =s-/=           | commente / décommente la ligne ou la sélection                |
+| =M-;=           | ajoute un commentaire en fin de ligne                         |
+| =M-t= / =C-t=     | échange deux mots / deux caractères                           |
+| =M-u= / =M-l= / =M-c= | MAJUSCULES / minuscules / Capitale pour le mot suivant      |
+| =M-^=           | colle la ligne à la précédente (supprime le retour à la ligne) |
+| =M-SPC=         | réduit les espaces à un seul (répète : zéro, puis retour)     |
+| =C-o=           | insère une ligne vide sans bouger le curseur                  |
+| =C-x C-o=       | supprime les lignes vides autour du curseur                   |
+| =M-z=           | supprime jusqu'à un caractère (=M-z )= : jusqu'à la parenthèse) |
+| =C-u 8 -=       | tape 8 fois =-= (un préfixe numérique marche avec presque tout) |
+
+** TODO 5.7 L'auto-complétion
+*Situation* : tu tapes du code et tu veux les propositions du serveur de langage.
+*À faire* : à la fin de =src/index.ts=, tape =cart.= puis complète =total()=. Sur une
+nouvelle ligne, obtiens =formatPrice= en tapant seulement =form= et =pri=.
+Efface ensuite ce que tu as ajouté.
+
+*** Comment faire
+- Le menu apparaît tout seul après 2 caractères. Après un =.=, appuie sur =TAB= pour l'ouvrir.
+- =C-n= / =C-p= (ou les flèches) pour choisir, =RET= ou =TAB= pour insérer.
+  =C-g= ferme le menu.
+- =M-SPC= dans le menu sépare deux morceaux de recherche. =form= =M-SPC= =pri= trouve =formatPrice=.
+- La documentation de l'élément choisi s'affiche à côté du menu après un instant.
+- Chemins de fichiers : dans une chaîne, tape =./sr= puis =TAB=.
+
+* Chapitre 6 — Erreurs, tests, terminal [/]
+** TODO 6.1 Corriger toutes les erreurs d'un fichier
+*Situation* : [[file:src/errors.ts][src/errors.ts]] a 3 erreurs de type (soulignées).
+*À faire* : corrige-les en allant d'erreur en erreur au clavier, sans les chercher à l'œil.
+*Équivalent VS Code* : F8, panneau « Problèmes ».
+*Vérifier* : =python3 verifier.py 6.1=
+
+*** Comment faire
+- =M-n= / =M-p= : erreur suivante / précédente. Le message s'affiche en bas.
+- =s-M= : liste des erreurs du fichier. =RET= sur une erreur y va.
+- =M-g e= : les erreurs dans le minibuffer, avec aperçu.
+- Fautes de frappe (=nmae=, =joim=) : =C-c l a= propose =Change spelling to 'name'=.
+  La correction est automatique.
+- Pour ="7.90"= : une chaîne au lieu d'un nombre. Remplace par =7.9=.
+- Sauvegarde, puis =M-n= : plus rien = plus d'erreur.
+
+** TODO 6.2 Lancer les tests et sauter à celui qui échoue
+*Situation* : un test échoue, et tu veux aller directement à la ligne en cause.
+*À faire* : lance les tests TypeScript, va au test qui échoue, corrige le bug dans
+=applyDiscount= ([[file:src/pricing.ts::export function applyDiscount][src/pricing.ts]]), relance jusqu'à ce que tout soit vert.
+*Vérifier* : =python3 verifier.py 6.2=
+
+*** Comment faire
+1. =C-x p c=, efface la commande proposée (=C-a C-k=), tape =npm test=, =RET=.
+2. Le buffer =*compilation*= affiche le résultat. =M-g M-n= saute à la première erreur
+   reconnue (=test/pricing.test.ts:15=). Encore =M-g M-n= pour la suivante.
+3. Le test attend =applyDiscount(100, 10) = 90= : le pourcentage doit être divisé par 100.
+   =M-.= sur =applyDiscount= pour aller corriger.
+4. Relance : dans =*compilation*=, =g= relance la même commande. Ou =C-x p c= puis =RET=.
+- Tests Python : =C-x p c= puis =cd scripts && python3 -m unittest=.
+- Une commande lancée avec =C-x p c= tourne *à la racine du projet*, d'où que tu sois.
+
+** TODO 6.3 Le terminal et les commandes rapides
+*Situation* : un =git status=, un =ls=, un script, sans quitter Emacs.
+*À faire* : lance =./scripts/deploy.sh= de 3 façons différentes.
+
+*** Comment faire
+- =C-`= : ouvre / ferme un vrai terminal (vterm) en bas.
+- =M-!= : lance *une* commande et affiche le résultat (=ls -la=, =git log -3=…).
+  =C-u M-!= insère le résultat *dans le fichier*, au curseur.
+- =M-&= : pareil, mais en arrière-plan (pour les commandes longues).
+- =C-x p c= : la meilleure option pour tests, builds et lint, car les erreurs deviennent
+  des liens cliquables (exercice 6.2).
+
+* Chapitre 7 — Fichiers et fenêtres [/]
+** TODO 7.1 Gérer les fenêtres
+*Situation* : comparer deux fichiers, garder les tests à côté du code.
+*À faire* : affiche =src/pricing.ts= et =test/pricing.test.ts= côte à côte, puis 3 fenêtres,
+puis reviens à une seule.
+
+*** Comment faire
+| Touche  | Effet                                              |
+|---------+----------------------------------------------------|
+| =C-x 3=   | coupe verticalement (côte à côte)                  |
+| =C-x 2=   | coupe horizontalement (l'une sous l'autre)         |
+| =C-x o=   | fenêtre suivante. Puis =o o o= suffit : la touche se répète |
+| =C-x 0=   | ferme la fenêtre actuelle                          |
+| =C-x 1=   | garde seulement la fenêtre actuelle                |
+| =C-x 4 f= | ouvre un fichier dans l'autre fenêtre (=C-x 4 .= : une définition) |
+- Fermer une fenêtre ne ferme pas le fichier : il reste dans =C-x b=.
+
+** TODO 7.2 Créer un dossier et déplacer des fichiers (dired)
+*Situation* : tu ranges des fichiers.
+*À faire* : crée le dossier =assets/archive= et *déplace* dedans les photos du 03 et du 07 mars
+(=IMG_20260303_0912.txt= et =IMG_20260307_0912.txt=).
+*Équivalent VS Code* : l'explorateur de fichiers.
+*Vérifier* : =python3 verifier.py 7.2=
+
+*** Comment faire
+1. =C-x d ~/emacs-exercices/assets RET= : dired, l'explorateur d'Emacs.
+   Depuis un fichier, =C-x C-j= ouvre dired sur son dossier.
+2. =+= puis =archive= =RET= : crée le dossier.
+3. =C-x 3=. Dans une fenêtre, entre dans =archive= (=RET=). Dans l'autre, dans =photos=.
+4. Dans =photos=, =m= marque les deux fichiers. Une erreur ? =u= démarque.
+5. =R= (renommer / déplacer) : Emacs propose *l'autre fenêtre* comme destination. =RET=.
+- Les touches de dired :
+  =C= copier, =R= renommer ou déplacer, =d= marquer pour suppression puis =x= pour supprimer,
+  =^= dossier parent, =g= rafraîchir, =% m= marquer avec une regexp.
+
+** TODO 7.3 Renommer plusieurs fichiers d'un coup
+*Situation* : les photos =IMG_20260312_0912.txt=... doivent s'appeler =mars-12.txt=...
+*À faire* : renomme les 4 photos restantes en une seule opération, comme si la liste de
+fichiers était du texte.
+*Vérifier* : =python3 verifier.py 7.3=
+
+*** Comment faire
+1. Ouvre =assets/photos= dans dired.
+2. =C-x C-q= : la liste des fichiers devient *modifiable* (wdired).
+3. =C-M-%=, cherche =IMG_202603\([0-9][0-9]\)_0912= et remplace par =mars-\1=, puis =!=.
+4. =C-c C-c= : tous les fichiers sont renommés sur le disque.
+- Tu peux aussi utiliser une macro (exercice 5.4), un rectangle (5.3), ou modifier à la main.
+
+** TODO 7.4 Marque-pages : revenir à un endroit important
+*Situation* : tu reviens souvent sur la même fonction, dans un gros projet.
+*À faire* : pose un marque-page sur =calcSubtotal=, va ailleurs, et reviens-y en 3 touches.
+
+*** Comment faire
+- =C-x r m= : pose un marque-page (nom proposé : le fichier). Il est gardé même après un redémarrage.
+- =C-x r b= : liste des marque-pages avec recherche, puis =RET=.
+- Pour la session seulement : =C-x r SPC a= enregistre la position dans le registre =a=,
+  =C-x r j a= y revient.
+
+* Chapitre 8 — Git [/]
+** TODO 8.1 Voir et annuler un seul changement
+*Situation* : tu as modifié plusieurs endroits d'un fichier et tu veux en annuler *un seul*.
+*À faire* : dans =src/format.ts=, modifie 2 fonctions éloignées. Regarde le diff de la
+première, puis annule-la sans toucher la seconde.
+
+*** Comment faire
+- Les lignes modifiées ont une marque dans la marge de gauche (diff-hl).
+- =C-x v ]= / =C-x v [= : changement suivant / précédent.
+- =C-x v *= : affiche le diff de ce changement.
+- =C-x v n= : *annule ce changement seulement*. Emacs demande confirmation.
+
+** TODO 8.2 Faire un commit propre avec magit
+*Situation* : tu as fait plusieurs exercices, et tu veux un commit qui ne contient *que*
+les corrections de =errors.ts= et =pricing.ts=.
+*À faire* : crée ce commit sans toucher au terminal.
+*Vérifier* : =python3 verifier.py 8.2=
+
+*** Comment faire
+1. =C-x g= : magit, l'état du dépôt.
+2. =n= / =p= se déplacent. =TAB= sur un fichier affiche son diff.
+3. =s= sur un fichier : l'ajoute au commit (stage). =u= : le retire.
+   =s= sur un *morceau* (hunk) n'ajoute que ce morceau. Sélectionne des lignes dans un
+   morceau puis =s= : seulement ces lignes.
+4. =c c= : commit. Écris le message, puis =C-c C-c= valide (=C-c C-k= annule).
+5. =k= sur un fichier ou un morceau : *jette* les modifications. Attention, c'est définitif.
+6. =q= ferme magit.
+
+** TODO 8.3 Historique et blame
+*Situation* : « qui a écrit cette ligne, et pourquoi ? »
+*À faire* : affiche l'historique du projet, puis celui de =src/pricing.ts= seulement,
+puis l'auteur de chaque ligne de ce fichier.
+
+*** Comment faire
+- Dans magit (=C-x g=) : =l l= affiche l'historique. =RET= sur un commit affiche son contenu.
+- Depuis un fichier : =C-c M-g= ouvre les actions git *sur ce fichier* :
+  =l= son historique, =B= le blame (auteur de chaque ligne), =d= son diff.
+- Dans le blame, =RET= sur une ligne ouvre le commit qui l'a introduite. =q= quitte.
+
+* Chapitre 9 — Défi final [/]
+** TODO 9 Le ticket complet, chronométré
+*Situation* : ticket « La livraison gratuite dès 50 CHF est codée en dur. Fais-en une
+constante partagée. »
+*À faire* (vise moins de 3 minutes, sans souris) :
+1. Dans =src/pricing.ts=, ajoute =export const FREE_SHIPPING_THRESHOLD = 50;=.
+2. Dans =src/errors.ts= (fonction =shippingCost=), remplace le =50= par cette constante.
+   L'import doit être ajouté par une action de code, pas à la main.
+3. Plus aucune erreur TypeScript dans =errors.ts=, et tous les tests passent.
+4. Le renommage de l'exercice 4.1 doit être fait.
+5. Commit avec magit.
+*Vérifier* : =python3 verifier.py 9=
+
+*** Indices
+- 2 : =C-x p f err=, =M-g i ship=, =C-s 50=, tape le nom (l'auto-complétion le propose),
+  =C-c l a= pour l'import.
+- 3 : =C-x p c npm test=.
+- 5 : =C-x g=, =s=, =c c=, =C-c C-c=.
+- Refais ce défi chaque semaine. Le chrono baisse vite.
+
+* Antisèche
+| Je veux…                                | Touche                 |
+|-----------------------------------------+------------------------|
+| ouvrir un fichier du projet             | =s-p= / =C-x p f=          |
+| changer de fichier ouvert               | =C-x b=                  |
+| lancer une commande par son nom         | =M-x= / =s-P=              |
+| savoir ce que fait une touche           | =C-h k=                  |
+| aller à la définition / revenir         | =M-.= / =M-,=              |
+| trouver les utilisations                | =M-?=                    |
+| renommer partout                        | =F2= / =C-c l r=           |
+| corriger, importer, extraire            | =C-c l a=                |
+| formater                                | =M-F=                    |
+| erreur suivante / précédente            | =M-n= / =M-p=              |
+| chercher dans le fichier                | =C-s= / =M-s l=            |
+| chercher dans le projet                 | =s-F= / =M-s r=            |
+| remplacer dans tout le projet           | =s-F=, =C-. E=, =C-c C-p=, … =C-c C-c= |
+| remplacer (avec confirmation / regexp)  | =M-%= / =C-M-%=            |
+| aller à une fonction du fichier         | =M-g i=                  |
+| sauter à un endroit visible             | =M-j=                    |
+| revenir à la position précédente        | =C-u C-SPC= / =C-x C-SPC=  |
+| historique du presse-papier             | =M-y=                    |
+| colonne / macro                         | =C-x SPC= … =C-x r t= / =F3= … =F4= |
+| lancer les tests / aller à l'échec      | =C-x p c= / =M-g M-n=      |
+| terminal                                | =C-`=                    |
+| fichiers (dired)                        | =C-x C-j=                |
+| git                                     | =C-x g=                  |
+| annuler / tout arrêter                  | =C-/= / =C-g=              |
