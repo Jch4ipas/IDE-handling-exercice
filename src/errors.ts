@@ -2,7 +2,7 @@ import type { Customer } from "./types.ts";
 import { formatPrice } from "./format.ts";
 
 export function welcome(customer: Customer): string {
-  return `Bienvenue ${customer.nmae} !`;
+  return `Bienvenue ${customer.nme} !`;
 }
 
 export function shippingCost(total: number): string {
