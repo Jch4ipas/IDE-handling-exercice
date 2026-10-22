@@ -14,6 +14,6 @@ export function memberBadge(customer: Customer): string {
   return customer.isMember ? "Membre" : "Invité"
 }
 
-export function initials(customer: Customer): string {
-  return customer.name.split(" ").map((part) => part[0]).joim("");
+export function nameLength(customer: Customer): number {
+  return customer.name.lenght;
 }

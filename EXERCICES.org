@@ -479,7 +479,7 @@ Efface ensuite ce que tu as ajouté.
 - =M-n= / =M-p= : erreur suivante / précédente. Le message s'affiche en bas.
 - =s-M= : liste des erreurs du fichier. =RET= sur une erreur y va.
 - =M-g e= : les erreurs dans le minibuffer, avec aperçu.
-- Fautes de frappe (=nme=, =joim=) : =C-c l a= propose =Change spelling to 'name'=.
+- Fautes de frappe (=nme=, =lenght=) : =C-c l a= propose =Change spelling to 'name'=.
   La correction est automatique.
 - Pour ="7.90"= : une chaîne au lieu d'un nombre. Remplace par =7.9=.
 - Sauvegarde, puis =M-n= : plus rien = plus d'erreur.
