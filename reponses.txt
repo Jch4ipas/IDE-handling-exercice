@@ -1,0 +1,8 @@
+Réponses des exercices (écris chaque réponse après les deux-points)
+
+3.4a Combien de fichiers .ts du projet contiennent TAX_RATE ? :
+3.4b Dans quel fichier se trouve le produit « Lait d'avoine » ? :
+3.5 Dans quel fichier est définie la fonction discountFor ? :
+6.3 Sortie de ./scripts/deploy.sh :
+8.3a Message du tout premier commit du projet :
+8.3b Auteur de la ligne TAX_RATE de src/pricing.ts :
